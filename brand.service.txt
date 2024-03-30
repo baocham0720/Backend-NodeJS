@@ -1,3 +1,5 @@
+//khi cần thì xem lại code
+
 import fs from 'node:fs'
 import createError from 'http-errors';
 const fileName = './src/data/brands.json';
