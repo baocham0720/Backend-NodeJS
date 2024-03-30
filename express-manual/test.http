@@ -1,0 +1,8 @@
+
+ http://localhost:8080/products
+content-type : application/json 
+
+{
+    "id": 1,
+    "name": "iphone 16"
+}

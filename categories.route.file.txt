@@ -1,0 +1,105 @@
+import express, {Request, Response } from 'express';
+//const categories = '../.../data/categories.json';
+//import categories from '../../data/categories.json';
+//console.log (categories)
+import fs from 'node:fs';
+
+const router = express.Router();
+const fileName = './src/data/categories.json'
+const data = fs.readFileSync(fileName, {encoding: 'utf-8', flag: 'r'});
+
+type ICategory = {id: number, name: string, description: string}
+let categories : ICategory[] = JSON.parse(data);
+
+//định nghĩa các routes cho resoure categories
+
+//GET All
+//http://localhost:8080/api/v1/categories
+router.get('', (req, res)=>{
+    const result = categories;
+    res.status(200).json (result)
+})
+
+//GET by ID
+//http://localhost:8080/api/v1/categories/1
+router.get('/:id', (req, res)=>{
+    const {id} = req.params; //return id = string nên phải parseInt id thành số để so sánh tuyệt đối ===
+    const data = categories.find(c => c.id === parseInt(id)) //dùng find để đi tìm ra phần tử trong mảng
+
+    if (!data){
+        throw Error ('Categories not found')
+
+        res.status(200).json(data) }
+    //res.status(200).json ({message: `Get All Categories ${id}`})
+}) ;
+
+//POST :thêm mới
+router.post('', (req, res)=>{
+    const data = req.body;
+
+    const newCategories = [...categories, data]
+    //ghi file
+    fs.writeFile(fileName, JSON.stringify(newCategories), function(err){
+        if (err)
+        throw err;
+        console.log ('Save!');
+    });
+
+    res.status(201).json ({message: `Create Categories`,
+     categories: JSON.stringify(newCategories)
+    });
+}) 
+
+//UPDARE by ID
+router.put('/:id', (req, res)=>{
+    const {id} = req.params;
+    const data = req.body;
+
+    //check xem Id có tồn tại không , sau đó mới cập nhật
+    const category = categories.find(c => c.id === parseInt(id))
+    if (!data) {
+        throw Error ('category not found')
+    }
+    //cập nhật
+    categories.map((c)=>{
+        if(c.id === parseInt(id)){
+            c.name = data.name;
+            c.description = data.description
+        }
+    })
+    //ghi file
+    fs.writeFile(fileName, JSON.stringify(categories), function(err){
+        if (err)
+        throw err;
+        console.log ('Save!');
+    });
+
+    res.status(200).json ({message: `Update Categories ${id}`,
+    payload: data
+    })
+}) 
+
+//DELETE by ID
+router.delete('/:id', (req, res)=>{
+    const {id} = req.params;
+
+    //check xem Id có tồn tại không , sau đó mới cập nhật
+    const category = categories.find(c => c.id === parseInt(id))
+    if (!data) {
+        throw Error ('category not found')
+    }
+    //đi xoá
+    const newCategories = categories.filter(c => c.id !== category ?.id)
+    fs.writeFile(fileName, JSON.stringify(newCategories), function(err){
+        if (err)
+        throw err;
+        console.log ('Save!');
+    });
+
+    res.status(200).json ({message: `Delete Categories ${id}`,
+    categories : newCategories
+     });
+}) 
+
+
+export default router

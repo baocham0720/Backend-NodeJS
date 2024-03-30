@@ -1,0 +1,27 @@
+### GET ALls
+GET http://localhost:8080/api/v1/categories
+
+### Update
+
+PUT http://localhost:8080/api/v1/categories/6604cda89bab73e2bb953e19
+Content-Type: application/json
+
+{
+    "categoryName": "Road bike",
+    "description": "Road bike description"
+
+}
+
+### Create a new category
+
+POST  http://localhost:8080/api/v1/categories
+Content-Type: application/json
+
+{
+    "categoryName": "Mountain",
+    "description": "Off-road and trail bicycles",
+    "slug" : "mountian"
+}
+
+### Delete
+DELETE http://localhost:8080/api/v1/categories

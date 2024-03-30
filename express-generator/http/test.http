@@ -1,0 +1,22 @@
+
+POST http://localhost:3000/products
+content-type : application/json
+
+{
+    "id" : 1,
+    "name" : "iphone 16"
+}
+
+###
+PUT http://localhost:3000/products
+content-type : application/json
+
+{
+    "id" : 2,
+    "name" : "iphone 16 promax"
+}
+
+//router động
+users/nhan
+users/tai 
+users/bac
