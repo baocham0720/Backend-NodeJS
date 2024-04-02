@@ -1,8 +1,9 @@
 import * as express from "express"
 import { Request, Response } from "express"
 import { User } from "./entities/user.entity"
+import {My} from "./entities/my.entity"
 import { myDataSource } from "./data-soucre"
-
+import * as bodyParser from "body-parser"
 // establish database connection
 myDataSource
     .initialize()
@@ -15,11 +16,22 @@ myDataSource
 
 // create and setup express app
 const app = express()
-app.use(express.json())
+app.use(bodyParser.json())
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: false }));
+
+app.get("/demo", async function (req: Request, res: Response) {
+    const result = await myDataSource.getRepository(My).find()
+    res.json(result)
+})
 
 // register routes
 app.get("/users", async function (req: Request, res: Response) {
-    const users = await myDataSource.getRepository(User).find()
+    const users = await myDataSource.getRepository(User).find({
+        relations: {
+            profile: true
+        }
+    })
     res.json(users)
 })
 
@@ -31,6 +43,7 @@ app.get("/users/:id", async function (req: Request, res: Response) {
 })
 
 app.post("/users", async function (req: Request, res: Response) {
+    console.log('create',req.body);
     const user = await myDataSource.getRepository(User).create(req.body)
     const results = await myDataSource.getRepository(User).save(user)
     return res.send(results)
