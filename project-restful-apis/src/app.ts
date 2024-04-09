@@ -1,47 +1,51 @@
 
-import express, { Express, Request, Response,  NextFunction } from 'express';
-import createError from 'http-errors';
-
+import express, { Express, Request, Response, NextFunction } from 'express';
+import createError  from 'http-errors';
 const app: Express = express();
 import { sendJsonErrors } from './helpers/responseHandler';
 import cors from 'cors'
-
-//import các routes
-import routerCategories from './routes/v1/categories.route';
-import routerBrands from './routes/v1/brands.route';
-import routerProducts from './routes/v1/product.route';
-import routerCustomers from './routes/v1/customers.route';
-import routerStaffs from './routes/v1/staffs.route';
-import routerOrders from './routes/v1/orders.route';
-import routerDemo from './routes/v2/demo.route';
+//Import cac Routes
+import routeCategories from './routes/v1/categories.route';
+import routeBrands from './routes/v1/brands.route'
+import routeProduct from './routes/v1/product.route'
+import routeDemo from './routes/v2/demo.route'
 import routerAuth from './routes/v1/auth.route';
-import {logs} from './middlewares/logs.middleware'
-import {second} from './middlewares/second.middleware';
-//bắt được kiểu json từ client gửi lên
+import routerStaff from './routes/v1/staffs.route';
+import routeCustomer from './routes/v1/customers.route';
+import routerOrder from './routes/v1/orders.route';
+import routerUpload from './routes/v1/upload.route';
+import routerEmail from './routes/v1/sendmail.route'
+import { logs } from './middlewares/logs.middleware';
+import { second } from './middlewares/second.middleware';
+import path from 'node:path'
+//Để bắt được kiểu JSON từ client gửi lên
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-//để sử dụng middleware
-app.use(cors({ origin: '*'})) //cho phép gọi bất kì đâu
-//app.use(logs)
-//app.use(second)
+app.use(cors({ origin: '*' })); //Cho phép gọi bất kỳ đâu
+// app.use(logs)
+// app.use(second)
 
+//Cau hinh thu muc tai nguyen tinh
+app.use(express.static(path.join(__dirname, "../public")));
 
-
-//định nghĩa các routes
+// Định nghiax các routes
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({message: 'Express + TypeScript Server'});
 });
 
-//cấu hình routes cho app
-app.use('/api/v1/categories', routerCategories )
-app.use('/api/v1/brands', routerBrands)
-app.use('/api/v1/products', routerProducts)
-app.use('/api/v1/customers', routerCustomers)
-app.use('/api/v1/staffs', routerStaffs)
-app.use('/api/v1/orders', routerOrders)
-app.use('/api/v2/demo', routerDemo)
-app.use('/api/v1/auth', routerAuth)
+//Cau hinh route cho App
+//http://localhost:8080/api/v1/categories
+app.use('/api/v1/categories', routeCategories);
+app.use('/api/v1/brands', routeBrands);
+app.use('/api/v1/products', routeProduct);
+app.use('/api/v1/demo', routeDemo);
+app.use('/api/v1/auth', routerAuth);
+app.use('/api/v1/staffs', routerStaff);
+app.use('/api/v1/customers', routeCustomer);
+app.use('/api/v1/orders', routerOrder);
+app.use('/api/v1/upload', routerUpload);
+app.use('/api/v1/sendmail', routerEmail);
 
 // catch 404 and forward to error handler
 app.use(function (req: Request, res: Response, next: NextFunction) {
@@ -61,5 +65,4 @@ app.use(function (err: any, req: Request, res: Response, next: NextFunction) {
   // });
   sendJsonErrors(req,res,err)
 });
-
 export default app;
